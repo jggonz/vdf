@@ -18,12 +18,18 @@ cat <<EOF
 class Vdf < Formula
   desc "Visual disk free: df -h with colour-gradient bars, grouped by physical disk"
   homepage "https://github.com/jggonz/vdf"
-  version "$version"
   license "MIT"
 
+  # One universal binary serves both Mac architectures.
   on_macos do
-    url "$base/vdf-$version-macos-universal.tar.gz"
-    sha256 "$(sha macos-universal)"
+    on_arm do
+      url "$base/vdf-$version-macos-universal.tar.gz"
+      sha256 "$(sha macos-universal)"
+    end
+    on_intel do
+      url "$base/vdf-$version-macos-universal.tar.gz"
+      sha256 "$(sha macos-universal)"
+    end
   end
 
   on_linux do

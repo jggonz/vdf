@@ -1,0 +1,147 @@
+.TH VDF 1 "November 2026" "vdf 1.0.0" "User Commands"
+.SH NAME
+vdf \- visual disk free: disk usage with colour-gradient bars
+.SH SYNOPSIS
+.B vdf
+[\fIOPTIONS\fR] [\fIPATH\fR...]
+.SH DESCRIPTION
+.B vdf
+reports free disk space like
+.BR df (1)
+with
+.BR \-h ,
+but it draws a horizontal colour-gradient bar for each entry.
+.PP
+By default the output is grouped by physical disk.
+Each disk gets an \fBentire disk\fR row that shows how much of the physical media is used,
+free, or unallocated (not covered by any partition).
+The volumes mounted from that disk are listed underneath it.
+Filesystems that are not backed by a local disk, such as network shares, are listed under \fBother\fR.
+.PP
+Each bar is scaled to the size of its row.
+The gradient spans the full width of the bar, so a fuller entry reaches further into the warm colours.
+A grey hatched segment marks space that the volume cannot use.
+On macOS this is usually space taken by other APFS volumes in the same container.
+On Linux it is usually space reserved for root.
+A dotted segment marks unallocated space on a disk.
+.PP
+When one or more \fIPATH\fR arguments are given,
+.B vdf
+shows only the filesystems that contain them, as a flat list.
+.SH OPTIONS
+.TP
+.BR \-d ", " \-\-disks
+Show physical disks only, without volume rows.
+.TP
+.BR \-f ", " \-\-flat
+Show a flat list of volumes, without grouping by disk (the classic df layout).
+.TP
+.BR \-a ", " \-\-all
+Include pseudo, hidden and duplicate filesystems, and disk images that have no visible volumes.
+.TP
+.BR \-l ", " \-\-long
+Also show the device and the filesystem type.
+.TP
+.BR \-n ", " \-\-names
+Show volume names (for example "Macintosh HD") instead of mount points.
+.TP
+.BR \-i ", " \-\-inodes
+Show inode usage instead of block usage. Implies \fB\-\-flat\fR.
+.TP
+.BR \-H ", " \-\-si
+Use powers of 1000 instead of 1024.
+.TP
+.BR \-L ", " \-\-local
+Show local filesystems only.
+.TP
+.BR \-t ", " \-\-type " " \fITYPE\fR
+Show only filesystems of this type. May be repeated.
+.TP
+.BR \-x ", " \-\-exclude\-type " " \fITYPE\fR
+Hide filesystems of this type. May be repeated.
+.TP
+.BR \-s ", " \-\-sort " " \fIKEY\fR
+Sort volumes by \fBmount\fR, \fBsize\fR, \fBused\fR, \fBavail\fR or \fBpct\fR.
+The default is system order.
+.TP
+.BR \-r ", " \-\-reverse
+Reverse the sort order.
+.TP
+.BR \-T ", " \-\-total
+Add a grand-total row. Volumes that share a container or pool are counted once.
+.TP
+.BR \-\-theme " " \fINAME\fR
+Gradient colours: \fBheat\fR (default), \fBocean\fR, \fBsunset\fR, \fBforest\fR, \fBrainbow\fR or \fBmono\fR.
+.TP
+.BR \-\-color " " \fIWHEN\fR
+\fBauto\fR (default), \fBalways\fR, \fBnever\fR, \fB256\fR or \fBtruecolor\fR.
+.TP
+.B \-\-ascii
+Draw the bars with plain ASCII characters.
+.TP
+.BR \-w ", " \-\-width " " \fIN\fR
+Total output width. The default is the terminal width.
+.TP
+.BR \-\-bar\-max " " \fIN\fR
+Maximum bar width in columns (default 80).
+.TP
+.BR \-\-max\-name " " \fIN\fR
+Maximum width of the name column (default 32).
+.TP
+.BR \-\-warn " " \fIPCT\fR
+Flag usage at or above \fIPCT\fR percent with "!" (default 90).
+.TP
+.BR \-\-no\-header ", " \-\-no\-legend
+Omit the header row or the legend.
+.TP
+.B \-\-json
+Print disks and volumes as JSON.
+.TP
+.BR \-h ", " \-\-help
+Print help.
+.TP
+.BR \-V ", " \-\-version
+Print the version.
+.SH ENVIRONMENT
+.TP
+.B VDF_THEME
+Default gradient theme.
+.TP
+.B NO_COLOR
+Disable colour when set.
+.TP
+.B COLORTERM
+24-bit colour is used when this is set to \fBtruecolor\fR or \fB24bit\fR,
+and 256 colours otherwise.
+.TP
+.B COLUMNS
+Overrides the detected terminal width.
+.SH NOTES
+On macOS the \fBUsed\fR figure for an APFS volume is the space used by that volume
+(\fBATTR_VOL_SPACEUSED\fR), the same figure that
+.BR df (1)
+shows.
+Disk information comes from the IOKit registry.
+On Linux it comes from \fI/sys/block\fR,
+and device-mapper (LVM, LUKS) and md devices are followed back to their physical disks.
+.SH EXIT STATUS
+0 on success, 1 if a path cannot be resolved or there is nothing to show.
+.SH EXAMPLES
+.TP
+.B vdf
+Disks and their volumes.
+.TP
+.B vdf \-d
+Physical disks only.
+.TP
+.B vdf ~
+The filesystem that holds your home directory.
+.TP
+.B vdf \-f \-s pct \-r
+All volumes, fullest first.
+.SH SEE ALSO
+.BR df (1),
+.BR diskutil (8),
+.BR lsblk (8)
+.SH AUTHOR
+jggonz and contributors. Source: https://github.com/jggonz/vdf
